@@ -67,7 +67,13 @@ def scrape_domovi():
 
             dom_linkovi = soup_zupanija.find_all('article', class_='dom hentry')
             
-            # TODO: Extract nursing home URLs from the articles
+            # Extract nursing home URLs from the articles
+            dom_url_ovi = []
+            for dom_article in dom_linkovi:
+                link_element = dom_article.find('h2', class_='entry-title dom-title').find('a')
+                if link_element and 'href' in link_element.attrs:
+                    url_doma = link_element['href']
+                    dom_url_ovi.append(url_doma)
 
             print(f"Found {len(dom_url_ovi)} for processing.")
 
@@ -80,7 +86,7 @@ def scrape_domovi():
                 # Excample of adding to the list
                 nursing_data = {'Name': 'Example nursing', 'Address': 'Example address', 'Telephone': '123456789', 'County_URL': url_zupanija}
                 svi_domovi_podatci.append(nursing_data)
-                time.sleep(1.5)
+                #time.sleep(1.5)
         except requests.exceptions.RequestException as e:
             print(f"Error fetching county page {url_zupanija}: {e}")
             continue
