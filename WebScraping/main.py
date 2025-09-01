@@ -86,7 +86,6 @@ def scrape_domovi():
                 # Excample of adding to the list
                 nursing_data = {'Name': 'Example nursing', 'Address': 'Example address', 'Telephone': '123456789', 'County_URL': url_zupanija}
                 svi_domovi_podatci.append(nursing_data)
-                #time.sleep(1.5)
         except requests.exceptions.RequestException as e:
             print(f"Error fetching county page {url_zupanija}: {e}")
             continue
