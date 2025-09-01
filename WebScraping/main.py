@@ -7,9 +7,9 @@ import pandas as pd
 # TODO: Refactor croatian to english, and refactor url for loading county, (currently loading from error page!!!! => that is why it is not working properly)
 
 def get_zupanije_urls():
-    pocetna_url = 'https://www.domovi-za-starije.com/zupanije/'
+    pocetna_url = 'https://www.domovi-za-starije.com/'
 
-    # Mimic a web browser
+    # Mimic a web browser - Special ClientID 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
@@ -21,12 +21,15 @@ def get_zupanije_urls():
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        links_container = soup.find('div', class_="search-county")
+        links_container = soup.find('ul', class_="select2-results__options")
 
         if links_container:
-            links = links_container.find_all('a')
-            zupanije_urls = [link['href'] for link in links]
-            return zupanije_urls
+            zupanije = {}
+            for opcija in links_container.find_all('li', class_='select2-results__option select2-results__option--selectable select2-results__option--highlighted'):
+                naziv_zupanije = opcija.text.strip()
+                url_zupanije = opcija.get('id').split('-')[-1]
+                zupanije[naziv_zupanije] = url_zupanije
+            return zupanije
         else:
             print("Nije pronaden popis zupanija na stranici")
             return []
