@@ -1,5 +1,5 @@
 import requests
-from bs4 import BeautifulSoup, soup
+from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
@@ -9,12 +9,18 @@ import pandas as pd
 def get_zupanije_urls():
     pocetna_url = 'https://www.domovi-za-starije.com/zupanije/'
 
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+
     try:
-        response = requests.get(pocetna_url)
+        response = requests.get(pocetna_url, headers=headers)
+
+        print(f"Statusni kod zahtjeva: {response.status_code}")
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        links_container = soup.find('div', class_='search-county')
+        links_container = soup.find('div', class_="search-county")
 
         if links_container:
             links = links_container.find_all('a')
@@ -83,4 +89,4 @@ def scrape_domovi():
 
 
 if __name__ == "__main__":
-    pass 
+    scrape_domovi()
