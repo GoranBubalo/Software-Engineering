@@ -20,11 +20,9 @@ def get_zupanije_urls():
         print(f"Statusni kod zahtjeva: {response.status_code}")
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-        print(soup.prettify())  # What are we getting back?
+        #print(soup.prettify())  # What are we getting back?
 
-        links_container = soup.find('select', class_="zupanije") # Error 
-
-
+        links_container = soup.find('select', id="zupanije") # Error 
 
         if links_container:
             zupanije = {}
@@ -32,7 +30,9 @@ def get_zupanije_urls():
                 naziv_zupanije = opcija.text.strip()
                 url_zupanije = opcija.get('value')
                 
-                # Add logic here 
+                if url_zupanije and url_zupanije != '':
+                    zupanije[naziv_zupanije] = url_zupanije
+            return zupanije
         else:
             print("Nije pronaden popis zupanija na stranici")
             return []
@@ -53,8 +53,8 @@ def scrape_domovi():
 
     ## Iterating through each county URL to get nursing home links
     svi_domovi_podatci = []
-    for url_zupanija in zupanije_urls:
-        print (f"--Scraping zupanije: {len(url_zupanija)} -----")
+    for naziv_zupanija, url_zupanija in zupanije_urls.items():
+        print (f"--Scraping zupanije: {len(naziv_zupanija)} -----")
 
         try:
             response_zupanija = requests.get(url_zupanija)
