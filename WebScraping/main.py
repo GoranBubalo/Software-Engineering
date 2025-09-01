@@ -4,7 +4,7 @@ import time
 import pandas as pd
 
 
-# TODO: Refactor croatian to english, and refactor url for loading county, (currently loading from error page!!!! => that is why it is not working properly)
+# TODO: Refactor croatian to english
 
 def get_zupanije_urls():
     pocetna_url = 'https://www.domovi-za-starije.com/'
@@ -20,16 +20,19 @@ def get_zupanije_urls():
         print(f"Statusni kod zahtjeva: {response.status_code}")
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
+        print(soup.prettify())  # What are we getting back?
 
-        links_container = soup.find('ul', class_="select2-results__options")
+        links_container = soup.find('select', class_="zupanije") # Error 
+
+
 
         if links_container:
             zupanije = {}
-            for opcija in links_container.find_all('li', class_='select2-results__option select2-results__option--selectable select2-results__option--highlighted'):
+            for opcija in links_container.find_all('option'):
                 naziv_zupanije = opcija.text.strip()
-                url_zupanije = opcija.get('id').split('-')[-1]
-                zupanije[naziv_zupanije] = url_zupanije
-            return zupanije
+                url_zupanije = opcija.get('value')
+                
+                # Add logic here 
         else:
             print("Nije pronaden popis zupanija na stranici")
             return []
