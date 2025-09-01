@@ -11,7 +11,11 @@ def get_zupanije_urls():
 
     # Mimic a web browser - Special ClientID 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'hr,en-US;q=0.7,en;q=0.3',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
     }
 
     try:
@@ -61,8 +65,9 @@ def scrape_domovi():
             response_zupanija.raise_for_status()
             soup_zupanija = BeautifulSoup(response_zupanija.text, 'html.parser')
 
-            dom_linkovi = soup_zupanija.find_all('a', class_='dom hentry')
-            dom_url_ovi = [link['href'] for link in dom_linkovi]
+            dom_linkovi = soup_zupanija.find_all('article', class_='dom hentry')
+            
+            # TODO: Extract nursing home URLs from the articles
 
             print(f"Found {len(dom_url_ovi)} for processing.")
 
