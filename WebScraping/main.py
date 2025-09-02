@@ -81,11 +81,12 @@ def scrape_domovi():
             for url_nursing in dom_url_ovi:
                 print(f" > Getting nursing details from: {url_nursing}")
 
-                # TODO: logic for getting and processing nursing home details
+                dom_podaci = scrape_dom_details(url_nursing)
                 
                 # Excample of adding to the list
-                nursing_data = {'Name': 'Example nursing', 'Address': 'Example address', 'Telephone': '123456789', 'County_URL': url_zupanija}
-                svi_domovi_podatci.append(nursing_data)
+                # nursing_data = {'Name': 'Example nursing', 'Address': 'Example address', 'Telephone': '123456789', 'County_URL': url_zupanija}
+                if dom_podaci:
+                    svi_domovi_podatci.append(dom_podaci)
         except requests.exceptions.RequestException as e:
             print(f"Error fetching county page {url_zupanija}: {e}")
             continue
