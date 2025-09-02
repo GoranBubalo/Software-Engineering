@@ -50,7 +50,14 @@ def scrape_dom_details(url):
         # Name 
         naziv_element = soup.find('h1', class_='entry-title dom-title')
         if naziv_element:
-            detalji_doma['Naziv'] = naziv_element.get_text(strip=True).replace(" - Dom za starije", "").replace(" - Obiteljski dom za starije", "").strip()
+            naziv = (naziv_element.get_text(strip=True)
+                    .replace('- Dom za starije', '')
+                    .replace('-Dom za starije', '')
+                    .replace('- Obiteljski dom za starije', '')
+                    .replace('-Obiteljski dom za starije', '')
+                    .strip())
+            detalji_doma['Naziv'] = naziv
+            
         
         # Address
         adresa_element = soup.find('i', class_='icon ion-location')
@@ -74,6 +81,7 @@ def scrape_dom_details(url):
             if web_element:
                 detalji_doma['Web_stranica'] = web_element['href']
         
+        # TODO: Fix this osnovni podatci is None
         # Other basic details
         osnovni_podaci_box = soup.find('div', class_='osnovni-podaci')
         if osnovni_podaci_box:
