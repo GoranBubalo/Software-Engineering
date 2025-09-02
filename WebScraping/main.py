@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from scraper_functions import scrape_dom_details
 
 
 # TODO: Refactor croatian to english
