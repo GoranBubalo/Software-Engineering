@@ -27,7 +27,6 @@ def scrape_dom_details(url):
         # Name
         naziv_element = soup.find('h1', class_='entry-title dom-title')
         if naziv_element:
-<<<<<<< HEAD
             naziv = naziv_element.get_text()
             naziv = naziv.replace('- Dom za starije', '')
             naziv = naziv.replace('-Dom za starije', '')
@@ -35,18 +34,6 @@ def scrape_dom_details(url):
             naziv = naziv.replace('-Obiteljski dom za starije', '')
             detalji_doma['Naziv'] = " ".join(naziv.strip().split())
 
-=======
-            naziv = (naziv_element.get_text(strip=True)
-                    .replace('- Dom za starije', '')
-                    .replace('-Dom za starije', '')
-                    .replace('- Obiteljski dom za starije', '')
-                    .replace('-Obiteljski dom za starije', '')
-                    .strip())
-            detalji_doma['Naziv'] = naziv
-            
-        
-        # Address
->>>>>>> 6e34987b1ec89d14aae9b552d65345bf0203069a
         adresa_element = soup.find('i', class_='icon ion-location')
         if adresa_element:
             parent_p_tag = adresa_element.find_parent('p')
@@ -54,49 +41,6 @@ def scrape_dom_details(url):
                 detalji_doma['Adresa'] = parent_p_tag.get_text(strip=True).split("Prikaži lokaciju")[0].strip()
 
         contact_info_box = soup.find('div', class_='basic-data')
-<<<<<<< HEAD
-=======
-        if contact_info_box:
-            telefoni = []
-            tel_elementi = contact_info_box.find_all('i', class_='icon ion-ios-telephone')
-            for tel_icon in tel_elementi:
-                tel_text = tel_icon.find_parent('p').get_text(strip=True).replace(" ", "").replace("/", "")
-                telefoni.append(tel_text)
-            if telefoni:
-                detalji_doma['Telefoni'] = ", ".join(telefoni)
-            
-            web_element = contact_info_box.find('a', href=lambda href: href and 'http' in href and not 'domovi-za-starije.com' in href and not 'facebook' in href)
-            if web_element:
-                detalji_doma['Web_stranica'] = web_element['href']
-        
-        # TODO: Fix this osnovni podatci is None
-        # Other basic details
-        osnovni_podaci_box = soup.find('div', class_='osnovni-podaci')
-        if osnovni_podaci_box:
-            fields = osnovni_podaci_box.find_all('div', class_='field')
-            for field in fields:
-                key_element = field.find('span', class_='field-label')
-                value_element = field
-                if key_element:
-                    key = key_element.get_text(strip=True).replace(':', '')
-                    value = value_element.get_text(strip=True).replace(key, '').replace(':', '').strip()
-                    if key in detalji_doma:
-                        detalji_doma[key] = value
-        
-        # tzpe of accommodation
-        def extract_checkmark_items(container_class):
-            container = soup.find('div', class_=container_class)
-            if container:
-                items = container.find_all('span', class_='inline')
-                for item in items:
-                    checkmark = item.find('i', class_='icon ion-checkmark-circled')
-                    if checkmark:
-                        key = item.get_text(strip=True)
-                        if key in detalji_doma:
-                            detalji_doma[key] = 'Da'
-        extract_checkmark_items('tip-smjestaja')
-        extract_checkmark_items('oblik-smjestaja')
->>>>>>> 6e34987b1ec89d14aae9b552d65345bf0203069a
 
         telefoni = []  # uvijek definiramo listu
 
