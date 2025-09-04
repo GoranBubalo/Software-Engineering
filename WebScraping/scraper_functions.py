@@ -15,7 +15,6 @@ def scrape_dom_details(url):
             'Naziv': '',
             'Adresa': '',
             'Telefoni': '',
-            'Ravnateljica': '',
             'Tip Smjestaja': '',
             'Oblik smjestaja': '',
             'Skrb i njega': '',
