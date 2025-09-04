@@ -83,6 +83,11 @@ def scrape_dom_details(url):
                         # Sada dohvati preostali tekst iz 'div' taga.
                         # To će biti samo vrijednost koju tražimo.
                         value = field.get_text(strip=True)
+
+                        # Check if value is empty 
+                        if not value:
+                            value = None
+
                         detalji_doma[key] = value
 
         # Tip smještaja i oblik smještaja (NOVA LOGIKA)
@@ -141,7 +146,11 @@ def scrape_dom_details(url):
                     if checkmark:
                         oprema_doma_items.append(item.get_text(strip=True))
 
-        detalji_doma['Opremljenost i usluge doma'] = ", ".join(oprema_doma_items)
+        # Ako lista ima vrijednosti, spoji ih u string, inače stavi None
+        if oprema_doma_items:
+            detalji_doma['Opremljenost i usluge doma'] = ", ".join(oprema_doma_items)
+        else:
+            detalji_doma['Opremljenost i usluge doma'] = None
 
         # Opremljenost soba (NOVA LOGIKA)
         oprema_soba_items = []
@@ -155,7 +164,11 @@ def scrape_dom_details(url):
                     if checkmark:
                         oprema_soba_items.append(item.get_text(strip=True))
                         
-        detalji_doma['Opremljenost soba'] = ", ".join(oprema_soba_items)
+        if oprema_soba_items:
+            detalji_doma['Opremljenost soba'] = ", ".join(oprema_soba_items)
+        else:
+            detalji_doma['Opremljenost soba'] = None
+        
         
         return detalji_doma
 
