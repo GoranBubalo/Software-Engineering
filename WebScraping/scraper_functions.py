@@ -15,7 +15,6 @@ def scrape_dom_details(url):
             'Naziv': '',
             'Adresa': '',
             'Telefoni': '',
-            'Osnivac': '',
             'Ravnateljica': '',
             'Tip Smjestaja': '',
             'Oblik smjestaja': '',
@@ -35,32 +34,38 @@ def scrape_dom_details(url):
             naziv = naziv.replace('-Obiteljski dom za starije', '')
             detalji_doma['Naziv'] = " ".join(naziv.strip().split())
 
-        # Adresa
         adresa_element = soup.find('i', class_='icon ion-location')
         if adresa_element:
             parent_p_tag = adresa_element.find_parent('p')
             if parent_p_tag:
                 detalji_doma['Adresa'] = parent_p_tag.get_text(strip=True).split("Prikaži lokaciju")[0].strip()
 
-        # TODO: Change the logic 
         contact_info_box = soup.find('div', class_='basic-data')
+
+        telefoni = []  # uvijek definiramo listu
+
         if contact_info_box:
-            telefoni = []
             tel_elementi = contact_info_box.find_all('i', class_='icon ion-ios-telephone')
+            
             for tel_icon in tel_elementi:
                 parent_p = tel_icon.find_parent('p')
                 if parent_p:
                     tel_text = parent_p.get_text(strip=True)
-                    # Pronalazi sve nizove znamenki
-                    brojevi = re.findall(r'\d+', tel_text)
+                    
+                    # Hvata sve brojeve telefona
+                    brojevi = re.findall(r'\+?\d[\d\s/-]{4,}\d', tel_text)
+                    
                     if brojevi:
-                        # Spaja sve pronađene nizove u jedan string bez razmaka
-                        clean_number = "".join(brojevi)
-                        telefoni.append(clean_number)
-            if telefoni:
-                detalji_doma['Telefoni'] = ", ".join(telefoni)
+                        # Dodaj sve pronađene brojeve u listu
+                        telefoni.extend(brojevi)
 
-        # TODO: Change the logic for getting Name of the director and founder
+        # Ako ima brojeva, spoji ih u string, inače stavi None
+        if telefoni:
+            detalji_doma['Telefoni'] = ", ".join(telefoni)
+        else:
+            detalji_doma['Telefoni'] = None
+
+        
         osnovni_podaci_box = soup.find('div', class_='card-header', string='Osnovni podaci')
         if osnovni_podaci_box:
             card_body = osnovni_podaci_box.find_next_sibling('div', class_='card-body')
@@ -78,9 +83,7 @@ def scrape_dom_details(url):
                         # Sada dohvati preostali tekst iz 'div' taga.
                         # To će biti samo vrijednost koju tražimo.
                         value = field.get_text(strip=True)
-                        
-                        if key in detalji_doma:
-                            detalji_doma[key] = value
+                        detalji_doma[key] = value
 
         # Tip smještaja i oblik smještaja (NOVA LOGIKA)
         tip_smjestaja_items = []
@@ -126,7 +129,7 @@ def scrape_dom_details(url):
             detalji_doma['Skrb i njega'] = ", ".join(skrb_i_njega_statusi)
 
 
-        # Opremljenost i usluge doma (NOVA LOGIKA)
+        # Opremljenost i usluge doma TODO: (NOVA LOGIKA => add null value fro empty fields)
         oprema_doma_items = []
         oprema_doma_header = soup.find('div', class_='card-header', string='Opremljenost i usluge doma')
         if oprema_doma_header:
