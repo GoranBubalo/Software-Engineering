@@ -107,10 +107,11 @@ def scrape_dom_details(url):
         extract_checkmark_items_to_list('Tip smještaja', tip_smjestaja_items)
         extract_checkmark_items_to_list('Oblik smještaja', oblik_smjestaja_items)
 
-        detalji_doma['Tip Smjestaja'] = ", ".join(tip_smjestaja_items)
-        detalji_doma['Oblik smjestaja'] = ", ".join(oblik_smjestaja_items)
+        detalji_doma['Tip Smjestaja'] = ", ".join(tip_smjestaja_items)  if tip_smjestaja_items else None
+        detalji_doma['Oblik smjestaja'] = ", ".join(oblik_smjestaja_items)  if oblik_smjestaja_items else None
+ 
 
-
+        detalji_doma['Skrb i njega'] = None  
         # Skrb i njega (maybe change logic => remove the yes and no)
         skrb_box = soup.find('div', class_='care')
         if skrb_box:
@@ -129,8 +130,10 @@ def scrape_dom_details(url):
                     
                     if status:
                         skrb_i_njega_statusi.append(f"{key}: {status}")
+                   
 
-            detalji_doma['Skrb i njega'] = ", ".join(skrb_i_njega_statusi)
+            if skrb_i_njega_statusi:
+                detalji_doma['Skrb i njega'] = ", ".join(skrb_i_njega_statusi)
 
 
         # Opremljenost i usluge doma TODO: (NOVA LOGIKA => add null value fro empty fields)

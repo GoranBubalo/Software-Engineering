@@ -4,8 +4,6 @@ import pandas as pd
 from scraper_functions import scrape_dom_details
 
 
-# TODO: Refactor croatian to english
-
 def get_zupanije_urls():
     pocetna_url = 'https://www.domovi-za-starije.com/'
 
@@ -26,8 +24,7 @@ def get_zupanije_urls():
         soup = BeautifulSoup(response.text, 'html.parser')
         #print(soup.prettify())  # What are we getting back?
 
-        links_container = soup.find('select', id="zupanije") # Error 
-
+        links_container = soup.find('select', id="zupanije")
         if links_container:
             zupanije = {}
             for opcija in links_container.find_all('option'):
@@ -64,38 +61,38 @@ def scrape_domovi():
             response_zupanija = requests.get(url_zupanija)
             response_zupanija.raise_for_status()
             soup_zupanija = BeautifulSoup(response_zupanija.text, 'html.parser')
-
-            dom_linkovi = soup_zupanija.find_all('article', class_='dom hentry')
+            # TODO: Fix logic here 
+            dom_linkovi = soup_zupanija.find_all('div', class_='listing domovi my-4')
             
-            # Extract nursing home URLs from the articles
+           
             dom_url_ovi = []
             for dom_article in dom_linkovi:
-                link_element = dom_article.find('h2', class_='entry-title dom-title').find('a')
-                if link_element and 'href' in link_element.attrs:
-                    url_doma = link_element['href']
-                    dom_url_ovi.append(url_doma)
+                link_elements = dom_article.find_all('h2', class_='entry-title dom-title')
+                for link_element in link_elements:
+                    a_tag = link_element.find('a')
+                    if a_tag and 'href' in a_tag.attrs:
+                        dom_url_ovi.append(a_tag['href'])
 
             print(f"Found {len(dom_url_ovi)} for processing.")
 
-            # Scraping and visiting each nursing home link
+          
             for url_nursing in dom_url_ovi:
                 print(f" > Getting nursing details from: {url_nursing}")
 
                 dom_podaci = scrape_dom_details(url_nursing)
-                
-                # Excample of adding to the list
-                # nursing_data = {'Name': 'Example nursing', 'Address': 'Example address', 'Telephone': '123456789', 'County_URL': url_zupanija}
+
                 if dom_podaci:
-                    svi_domovi_podatci.append(dom_podaci)
+                    svi_domovi_podatci.append(dom_podaci) # TO HERE FIX 
+                # ------------------------------------------------------------
         except requests.exceptions.RequestException as e:
             print(f"Error fetching county page {url_zupanija}: {e}")
             continue
     
-    # Storing in excel
-    if svi_domovi_podatci:
-        df = pd.DataFrame(svi_domovi_podatci)
 
-        # Storing data in excel
+    if svi_domovi_podatci:
+        df = pd.DataFrame(svi_domovi_podatci).where(pd.notnull, 'Null')
+
+
         try:
             df.to_excel('nursing_homes_data.xlsx', index=False, engine='openpyxl')
             print("Data successfully saved to nursing_homes_data.xlsx")
