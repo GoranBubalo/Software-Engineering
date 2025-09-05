@@ -41,28 +41,29 @@ def scrape_dom_details(url):
 
         contact_info_box = soup.find('div', class_='basic-data')
 
-        telefoni = []  # uvijek definiramo listu
+        telefoni = []
+        mobiteli = []
 
         if contact_info_box:
-            tel_elementi = contact_info_box.find_all('i', class_='icon ion-ios-telephone')
-            
-            for tel_icon in tel_elementi:
-                parent_p = tel_icon.find_parent('p')
+            # Fiksni telefoni
+            tel_icons = contact_info_box.find_all('i', class_='ion-ios-telephone')
+            for icon in tel_icons:
+                parent_p = icon.find_parent('p')
                 if parent_p:
-                    tel_text = parent_p.get_text(strip=True)
-                    
-                    # Hvata sve brojeve telefona
-                    brojevi = re.findall(r'\+?\d[\d\s/-]{4,}\d', tel_text)
-                    
-                    if brojevi:
-                        # Dodaj sve pronađene brojeve u listu
-                        telefoni.extend(brojevi)
+                    brojevi = re.findall(r'\+?\d[\d\s/-]{4,}\d', parent_p.get_text(strip=True))
+                    telefoni.extend(brojevi)
 
-        # Ako ima brojeva, spoji ih u string, inače stavi None
-        if telefoni:
-            detalji_doma['Telefoni'] = ", ".join(telefoni)
-        else:
-            detalji_doma['Telefoni'] = None
+            # Mobiteli
+            mob_icons = contact_info_box.find_all('i', class_='ion-iphone')
+            for icon in mob_icons:
+                parent_p = icon.find_parent('p')
+                if parent_p:
+                    brojevi = re.findall(r'\+?\d[\d\s/-]{4,}\d', parent_p.get_text(strip=True))
+                    mobiteli.extend(brojevi)
+
+        # Spremi u dict
+        detalji_doma['Telefoni'] = ", ".join(telefoni) if telefoni else None
+        detalji_doma['Mobiteli'] = ", ".join(mobiteli) if mobiteli else None
 
         
         osnovni_podaci_box = soup.find('div', class_='card-header', string='Osnovni podaci')

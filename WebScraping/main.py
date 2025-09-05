@@ -96,6 +96,7 @@ def scrape_domovi():
         try:
             df.to_excel('nursing_homes_data.xlsx', index=False, engine='openpyxl')
             print("Data successfully saved to nursing_homes_data.xlsx")
+            
         except Exception as e:
             print(f"Error saving data to Excel: {e}")
     else:
