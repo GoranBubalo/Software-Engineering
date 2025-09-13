@@ -14,6 +14,10 @@ public class Rectangle implements Shape {
     @Override
     public Shape clone() {
         return new Rectangle(this.width,this.height);
+    }
 
+    @Override
+    public void draw() {
+        System.out.println("Drawing rectangle " + width + "x" + height);
     }
 }
